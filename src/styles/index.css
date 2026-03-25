@@ -1,0 +1,51 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--luxury-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--luxury-gold);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--luxury-accent);
+}
+
+/* Selection color */
+::selection {
+  background: var(--luxury-gold);
+  color: white;
+}
+
+/* Prevent layout shift */
+body {
+  overflow-x: hidden;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+:root {
+  --luxury-emerald: #145A43;
+  --luxury-emerald-dark: #0F3D2E;
+  --luxury-emerald-light: #34D399;
+  --luxury-charcoal: #374151;
+  --luxury-cream: #F8F5F0;
+  --luxury-white: #FFFFFF;
+}

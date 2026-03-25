@@ -1,0 +1,195 @@
+import { useEffect, useState } from "react";
+
+interface Offer {
+  id?: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  active: boolean;
+}
+
+export default function AddOffer() {
+  const [form, setForm] = useState<Offer>({
+    title: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    active: true,
+  });
+
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const API = "http://localhost:8080/offers";
+
+  // Fetch offers
+  const fetchOffers = async () => {
+    setLoading(true);
+    const res = await fetch(API);
+    const data = await res.json();
+    setOffers(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchOffers();
+  }, []);
+
+  // Handle input change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // Submit form
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const method = editingId ? "PUT" : "POST";
+    const url = editingId ? `${API}/${editingId}` : API;
+
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    setForm({
+      title: "",
+      description: "",
+      startDate: "",
+      endDate: "",
+      active: true,
+    });
+
+    setEditingId(null);
+    fetchOffers();
+  };
+
+  // Delete offer
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this offer?")) return;
+
+    await fetch(`${API}/${id}`, {
+      method: "DELETE",
+    });
+
+    fetchOffers();
+  };
+
+  // Edit offer
+  const handleEdit = (offer: Offer) => {
+    setForm(offer);
+    setEditingId(offer.id!);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="max-w-5xl mx-auto">
+
+        {/* FORM */}
+        <div className="bg-white shadow-xl rounded-2xl p-6 mb-8">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800">
+            {editingId ? "Update Offer" : "Create New Offer"}
+          </h2>
+
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <input
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              placeholder="Offer Title"
+              className="border p-3 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+              required
+            />
+
+            <input
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Description"
+              className="border p-3 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+              required
+            />
+
+            <input
+              type="date"
+              name="startDate"
+              value={form.startDate}
+              onChange={handleChange}
+              className="border p-3 rounded-lg"
+            />
+
+            <input
+              type="date"
+              name="endDate"
+              value={form.endDate}
+              onChange={handleChange}
+              className="border p-3 rounded-lg"
+            />
+
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg font-semibold transition"
+              >
+                {editingId ? "Update Offer" : "Add Offer"}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* LIST */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">All Offers</h2>
+
+          {loading ? (
+            <p className="text-center text-gray-500">Loading...</p>
+          ) : offers.length === 0 ? (
+            <p className="text-center text-gray-500">No offers available</p>
+          ) : (
+            <div className="grid gap-4">
+              {offers.map((offer) => (
+                <div
+                  key={offer.id}
+                  className="bg-white shadow-md rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                >
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {offer.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      {offer.description}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {offer.startDate} → {offer.endDate}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(offer)}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(offer.id!)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
