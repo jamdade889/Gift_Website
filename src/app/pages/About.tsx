@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Gift, Users, Briefcase, Sparkles } from "lucide-react";
 
 export function About() {
+
   const stats = [
     { value: "1000+", label: "Gifts Delivered" },
     { value: "200+", label: "Clients Served" },
@@ -32,14 +33,35 @@ export function About() {
     },
   ];
 
+  // ✅ COMMON ANIMATION
+  const fadeUp = {
+    hidden: { opacity: 0, y: 40 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
+  };
+
+  const stagger = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+
   return (
     <div className="min-h-screen pt-20 bg-[#0F3D2E]">
 
-      {/* 🔥 HERO STYLE HEADER */}
+      {/* 🔥 HERO */}
       <section className="py-28 text-center text-white px-6">
         <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial="hidden"
+          animate="show"
+          variants={fadeUp}
           className="text-4xl sm:text-5xl md:text-6xl"
           style={{
             fontFamily: "'Playfair Display', serif",
@@ -49,24 +71,36 @@ export function About() {
           The Art of Gifting
         </motion.h1>
 
-        {/* GOLD LINE */}
-        <div className="h-[2px] w-40 mx-auto mt-5 mb-6 bg-[#D4AF37]" />
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: "160px" }}
+          transition={{ duration: 1 }}
+          className="h-[2px] mx-auto mt-5 mb-6 bg-[#D4AF37]"
+        />
 
-        <p className="max-w-xl mx-auto text-gray-200 text-sm sm:text-lg">
+        <motion.p
+          initial="hidden"
+          animate="show"
+          variants={fadeUp}
+          transition={{ delay: 0.2 }}
+          className="max-w-xl mx-auto text-gray-200 text-sm sm:text-lg"
+        >
           Creating meaningful experiences through thoughtfully curated gifts.
-        </p>
+        </motion.p>
       </section>
 
-      {/* 🔥 STORY SECTION */}
+      {/* 🔥 STORY */}
       <section className="bg-[#F9FAFB] py-24 rounded-t-[50px]">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center"
+        >
 
-          {/* TEXT */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="space-y-6"
-          >
+          {/* LEFT TEXT */}
+          <motion.div variants={fadeUp} className="space-y-6">
             <h2
               className="text-4xl md:text-5xl text-gray-800 leading-tight"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -90,15 +124,15 @@ export function About() {
 
             <p className="text-gray-600 text-lg">
               Our approach blends premium quality, elegant design and attention
-              to detail — ensuring every gift tells a story.
+              to detail.
             </p>
           </motion.div>
 
-          {/* RIGHT VISUAL CARD */}
+          {/* RIGHT CARD */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="bg-white p-10 rounded-3xl shadow-xl"
+            variants={fadeUp}
+            whileHover={{ y: -6 }}
+            className="bg-white p-10 rounded-3xl shadow-xl transition"
           >
             <h3
               className="text-2xl mb-4 text-gray-800"
@@ -115,18 +149,24 @@ export function About() {
             </ul>
           </motion.div>
 
-        </div>
+        </motion.div>
       </section>
 
       {/* 🔥 STATS */}
       <section className="py-20 bg-[#0F3D2E] text-white">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-10 text-center"
+        >
 
           {stats.map((stat, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              variants={fadeUp}
+              whileHover={{ scale: 1.05 }}
             >
               <div className="text-4xl font-bold text-[#E6C48A]">
                 {stat.value}
@@ -137,15 +177,20 @@ export function About() {
             </motion.div>
           ))}
 
-        </div>
+        </motion.div>
       </section>
 
       {/* 🔥 VALUES */}
       <section className="py-24 bg-[#F9FAFB]">
         <div className="max-w-7xl mx-auto px-6">
 
-          {/* HEADING */}
-          <div className="text-center mb-16">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={fadeUp}
+            className="text-center mb-16"
+          >
             <h2
               className="text-4xl md:text-5xl text-gray-800"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -158,17 +203,22 @@ export function About() {
             <p className="text-gray-600 mt-4">
               The foundation of everything we create
             </p>
-          </div>
+          </motion.div>
 
-          {/* CARDS */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
 
             {values.map((v, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition hover:-translate-y-1"
+                variants={fadeUp}
+                whileHover={{ y: -8 }}
+                className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition"
               >
                 <div className="w-14 h-14 mb-5 flex items-center justify-center bg-[#0F3D2E] text-white rounded-full">
                   <v.icon size={22} />
@@ -184,7 +234,7 @@ export function About() {
               </motion.div>
             ))}
 
-          </div>
+          </motion.div>
         </div>
       </section>
 

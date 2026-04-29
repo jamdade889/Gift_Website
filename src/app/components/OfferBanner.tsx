@@ -30,7 +30,7 @@ export function OfferBanner() {
         />
 
         {/* GOLD LINE */}
-        <div className="absolute top-0 w-full h-[1px] bg-[#D4AF37]/40" />
+        <div className="absolute top-0 w-full h-[3px] bg-[#D4AF37]/40" />
 
         {/* 🔥 MARQUEE */}
         <div className="relative z-10 overflow-hidden">
@@ -76,7 +76,7 @@ export function OfferBanner() {
           align-items: center;
           gap: 8px;
           margin: 0 40px;
-          font-size: 13px;
+          font-size: 20px;
           color: #E6C48A;
           white-space: nowrap;
           letter-spacing: 0.5px;

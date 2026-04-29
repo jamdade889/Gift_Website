@@ -1,134 +1,183 @@
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import {
   Building2,
   Gift,
   PartyPopper,
   CalendarHeart,
-  Megaphone,
-  Landmark,
-  Laptop,
-  ShoppingBag,
-  Package,
-  HeartPulse,
-  GraduationCap
+  Megaphone
 } from "lucide-react";
 
 export function TrustedSection() {
+
+  const [showAll, setShowAll] = useState(false);
 
   const useCases = [
     {
       icon: Building2,
       title: "Corporate Events",
-      desc: "Employee appreciation, milestones, team celebrations"
+      desc: "Celebrate employee milestones, team achievements, and corporate events with thoughtfully curated gifting solutions that strengthen relationships."
     },
     {
       icon: Gift,
       title: "Client Gifting",
-      desc: "Festivals, onboarding, partnership gifts"
+      desc: "Make a lasting impression with premium client gifts designed for festive seasons, onboarding experiences, and long-term partnerships."
     },
     {
       icon: PartyPopper,
       title: "Personal Celebrations",
-      desc: "Birthdays, weddings, anniversaries"
+      desc: "From birthdays to weddings and anniversaries, elevate personal moments with elegant and meaningful gifting experiences."
     },
     {
       icon: CalendarHeart,
-      title: "Festive & Seasonal Gifts",
-      desc: "Diwali, Christmas, New Year, corporate festivals"
+      title: "Festive Collections",
+      desc: "Celebrate festivals like Diwali, Christmas, and New Year with luxurious hampers crafted to reflect joy, tradition, and sophistication."
     },
     {
       icon: Megaphone,
-      title: "Promotional & Branding Gifts",
-      desc: "Customized products for brand awareness"
-    }
+      title: "Brand Promotions",
+      desc: "Enhance your brand identity with customized gifting kits tailored for marketing campaigns, events, and brand awareness initiatives."
+    },
   ];
 
-  const industries = [
-    { icon: Landmark, name: "Finance" },
-    { icon: Laptop, name: "IT" },
-    { icon: ShoppingBag, name: "Retail" },
-    { icon: Package, name: "FMCG" },
-    { icon: HeartPulse, name: "Healthcare" },
-    { icon: GraduationCap, name: "Education" }
-  ];
+  const visibleItems = showAll ? useCases : useCases.slice(0, 3);
+
+  const container = {
+    hidden: {},
+    show: {
+      transition: { staggerChildren: 0.12 }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0 }
+  };
 
   return (
-    <section className="py-24 bg-white">
+    <section className="relative py-28 overflow-hidden">
 
-      <div className="max-w-7xl mx-auto px-6">
+      {/* 🔥 BACKGROUND */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#f8f5ef] via-white to-[#f8f5ef]" />
 
-        {/* Heading */}
+      {/* 🔥 GOLD GLOW */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#C9A227]/10 blur-[120px] rounded-full" />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-6">
+
+        {/* 🔹 HEADING */}
         <div className="text-center mb-16">
 
-          <h2
-            className="text-4xl md:text-5xl font-bold mb-4"
+          <motion.h2
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-5xl font-semibold leading-tight"
             style={{
-              color: "#0F3D2E",
-              fontFamily: "Playfair Display, serif"
+              fontFamily: "'Playfair Display', serif",
+              color: "#0F3D2E"
             }}
           >
-            Trusted by Leading Brands and  Perfect for Every Occasion
-          </h2>
+            Crafted for Every Occasion <br />
+            <span style={{ color: "#C9A227" }}>
+              Trusted by Modern Businesses
+            </span>
+          </motion.h2>
 
-          <div className="h-[2px] w-28 bg-yellow-500 mx-auto"></div>
+          {/* GOLD LINE */}
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: "120px" }}
+            transition={{ duration: 1 }}
+            className="h-[2px] mx-auto mt-6"
+            style={{ backgroundColor: "#C9A227" }}
+          />
 
+          <p className="text-gray-600 mt-6 max-w-2xl mx-auto">
+            We deliver premium gifting experiences designed to build relationships,
+            celebrate moments, and elevate brand value through thoughtful presentation.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-16">
+        {/* 🔹 CONTENT LIST */}
+        <motion.div
+          layout   // 🔥 KEY: smooth expand/collapse
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="space-y-8"
+        >
 
-          {/* LEFT SIDE */}
-          <div className="space-y-8">
+          <AnimatePresence mode="popLayout">
 
-            {useCases.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-start gap-5"
+            {visibleItems.map((itemData, index) => (
+
+              <motion.div
+                key={itemData.title} // 🔥 important fix
+                layout
+                variants={item}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                whileHover={{ x: 6 }}
+                className="flex items-start gap-5 group"
               >
 
-                <div className="bg-emerald-50 border border-yellow-500/30 p-4 rounded-full">
-                  <item.icon className="w-6 h-6 text-emerald-700" />
+                {/* ICON */}
+                <div className="
+                  p-4 rounded-full
+                  bg-white
+                  border border-[#C9A227]/30
+                  shadow-sm
+                  group-hover:bg-[#0F3D2E]
+                  transition duration-300
+                ">
+                  <itemData.icon className="w-6 h-6 text-[#0F3D2E] group-hover:text-[#E6C48A]" />
                 </div>
 
+                {/* TEXT */}
                 <div>
-                  <h3 className="text-lg font-semibold text-emerald-900">
-                    {item.title}
+                  <h3 className="text-lg font-semibold text-[#0F3D2E]">
+                    {itemData.title}
                   </h3>
 
                   <p className="text-gray-600 text-sm mt-1 leading-relaxed">
-                    {item.desc}
+                    {itemData.desc}
                   </p>
                 </div>
 
-              </div>
+              </motion.div>
+
             ))}
 
-          </div>
+          </AnimatePresence>
 
-          {/* RIGHT SIDE */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+        </motion.div>
 
-            {industries.map((industry, index) => (
-              <div
-                key={index}
-                className="border border-yellow-500/30 rounded-xl p-6 text-center bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition duration-300"
-              >
+        {/* 🔥 VIEW MORE BUTTON */}
+        <div className="text-center mt-12">
 
-                <div className="flex justify-center mb-3 text-emerald-700">
-                  <industry.icon className="w-7 h-7" />
-                </div>
-
-                <p className="text-sm font-semibold text-emerald-900">
-                  {industry.name}
-                </p>
-
-              </div>
-            ))}
-
-          </div>
+          <motion.button
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0 15px 40px rgba(201,162,39,0.3)"
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowAll(prev => !prev)} // ✅ FIXED toggle
+            className="px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all"
+            style={{
+              backgroundColor: "#C9A227",
+              color: "#0F3D2E"
+            }}
+          >
+            {showAll ? "Show Less" : "View More"}
+          </motion.button>
 
         </div>
 
       </div>
-
     </section>
   );
 }

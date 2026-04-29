@@ -22,63 +22,98 @@ export default function AddOffer() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // 🔥 MODAL STATE
+  const [showModal, setShowModal] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
   const API = "http://localhost:8080/offers";
 
-  // Fetch offers
+  // FETCH
   const fetchOffers = async () => {
-    setLoading(true);
-    const res = await fetch(API);
-    const data = await res.json();
-    setOffers(data);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const res = await fetch(API);
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setOffers(data);
+      } else if (Array.isArray(data.offers)) {
+        setOffers(data.offers);
+      } else {
+        setOffers([]);
+      }
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+      setOffers([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchOffers();
   }, []);
 
-  // Handle input change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // INPUT
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Submit form
+  // SUBMIT
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const method = editingId ? "PUT" : "POST";
-    const url = editingId ? `${API}/${editingId}` : API;
+    try {
+      const method = editingId ? "PUT" : "POST";
+      const url = editingId ? `${API}/${editingId}` : API;
 
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+      await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    setForm({
-      title: "",
-      description: "",
-      startDate: "",
-      endDate: "",
-      active: true,
-    });
+      setForm({
+        title: "",
+        description: "",
+        startDate: "",
+        endDate: "",
+        active: true,
+      });
 
-    setEditingId(null);
-    fetchOffers();
+      setEditingId(null);
+      fetchOffers();
+    } catch (error) {
+      console.error("Error saving offer:", error);
+    }
   };
 
-  // Delete offer
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this offer?")) return;
-
-    await fetch(`${API}/${id}`, {
-      method: "DELETE",
-    });
-
-    fetchOffers();
+  // 🔥 OPEN MODAL
+  const openDeleteModal = (id: string) => {
+    setDeleteId(id);
+    setShowModal(true);
   };
 
-  // Edit offer
+  // 🔥 CONFIRM DELETE
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      await fetch(`${API}/${deleteId}`, {
+        method: "DELETE",
+      });
+
+      setShowModal(false);
+      setDeleteId(null);
+      fetchOffers();
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
+  };
+
+  // EDIT
   const handleEdit = (offer: Offer) => {
     setForm(offer);
     setEditingId(offer.id!);
@@ -95,14 +130,16 @@ export default function AddOffer() {
             {editingId ? "Update Offer" : "Create New Offer"}
           </h2>
 
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+          <form
+            onSubmit={handleSubmit}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
             <input
               name="title"
               value={form.title}
               onChange={handleChange}
               placeholder="Offer Title"
-              className="border p-3 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="border p-3 rounded-lg"
               required
             />
 
@@ -111,7 +148,7 @@ export default function AddOffer() {
               value={form.description}
               onChange={handleChange}
               placeholder="Description"
-              className="border p-3 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="border p-3 rounded-lg"
               required
             />
 
@@ -134,7 +171,7 @@ export default function AddOffer() {
             <div className="md:col-span-2">
               <button
                 type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg font-semibold transition"
+                className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold"
               >
                 {editingId ? "Update Offer" : "Add Offer"}
               </button>
@@ -144,27 +181,27 @@ export default function AddOffer() {
 
         {/* LIST */}
         <div>
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">All Offers</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            All Offers
+          </h2>
 
           {loading ? (
             <p className="text-center text-gray-500">Loading...</p>
           ) : offers.length === 0 ? (
-            <p className="text-center text-gray-500">No offers available</p>
+            <p className="text-center text-gray-500">
+              No offers available
+            </p>
           ) : (
             <div className="grid gap-4">
               {offers.map((offer) => (
                 <div
                   key={offer.id}
-                  className="bg-white shadow-md rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                  className="bg-white shadow-md rounded-xl p-4 flex justify-between"
                 >
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      {offer.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      {offer.description}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <h3 className="font-semibold">{offer.title}</h3>
+                    <p className="text-sm">{offer.description}</p>
+                    <p className="text-xs text-gray-400">
                       {offer.startDate} → {offer.endDate}
                     </p>
                   </div>
@@ -172,14 +209,14 @@ export default function AddOffer() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(offer)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+                      className="bg-blue-500 text-white px-3 py-1 rounded"
                     >
                       Edit
                     </button>
 
                     <button
-                      onClick={() => handleDelete(offer.id!)}
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+                      onClick={() => openDeleteModal(offer.id!)}
+                      className="bg-red-500 text-white px-3 py-1 rounded"
                     >
                       Delete
                     </button>
@@ -189,6 +226,33 @@ export default function AddOffer() {
             </div>
           )}
         </div>
+
+        {/* 🔥 CUSTOM MODAL */}
+        {showModal && (
+          <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-xl shadow-lg w-80 text-center">
+              <h2 className="text-lg font-semibold mb-4">
+                Are you sure you want to delete this offer?
+              </h2>
+
+              <div className="flex justify-around">
+                <button
+                  onClick={confirmDelete}
+                  className="bg-red-500 text-white px-4 py-2 rounded"
+                >
+                  Yes
+                </button>
+
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="bg-gray-300 px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

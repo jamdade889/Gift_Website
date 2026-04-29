@@ -1,11 +1,14 @@
+
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router";
 import heroImg from "../../assets/image.jpeg";
 
-
 export function Hero() {
+  const navigate = useNavigate();
+
   return (
     <section className="relative w-full h-screen overflow-hidden">
-  
+
       {/* 🔥 BACKGROUND IMAGE */}
       <motion.img
         src={heroImg}
@@ -26,17 +29,17 @@ export function Hero() {
       />
 
       {/* 🔥 CONTENT */}
-      <div className="
-        relative z-10 
-        w-full h-full 
-        flex 
-        flex-col 
-        justify-center items-center   /* ✅ Mobile center */
-        sm:items-start sm:justify-center  /* ✅ Desktop left */
-        px-6 sm:px-10 lg:px-16
-        text-center sm:text-left
-      ">
-
+      <div
+        className="
+          relative z-10 
+          w-full h-full 
+          flex flex-col 
+          justify-center items-center 
+          sm:items-start 
+          px-6 sm:px-10 lg:px-16
+          text-center sm:text-left
+        "
+      >
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -64,10 +67,10 @@ export function Hero() {
             transition={{ duration: 1, delay: 0.5 }}
             className="
               h-[2px] mt-4 mb-5 
-              mx-auto sm:mx-0   /* ✅ Center mobile, left desktop */
+              mx-auto sm:mx-0
               max-w-[180px] sm:max-w-[260px]
             "
-            style={{ backgroundColor: "#D4AF37" }}
+            style={{ backgroundColor: "#C9A227" }} // darker gold
           />
 
           {/* 🔹 SUBTEXT */}
@@ -83,7 +86,11 @@ export function Hero() {
 
           {/* 🔹 BUTTON */}
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            onClick={() => navigate("/contact")}   // ✅ redirect
+            whileHover={{
+              scale: 1.06,
+              boxShadow: "0 15px 40px rgba(201,162,39,0.6)",
+            }}
             whileTap={{ scale: 0.95 }}
             className="
               w-full sm:w-auto
@@ -94,7 +101,6 @@ export function Hero() {
               uppercase 
               tracking-wider 
               text-xs sm:text-sm 
-              shadow-xl 
               transition-all
             "
             style={{
@@ -115,3 +121,5 @@ export function Hero() {
     </section>
   );
 }
+
+
